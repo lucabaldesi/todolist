@@ -3,6 +3,7 @@
 from flask import Flask, request
 from flask import render_template
 from flask import redirect
+from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -26,13 +27,26 @@ class Task(db.Model):
     def md(self):
         return '* {0}\n'.format(self.content)
 
+    def dict(self):
+        return {'id': self.id,
+                'content': self.content,
+                'done': self.done}
+
 
 db.create_all()
 
 
+def render_tasks_json(tasks):
+    tasks = [t.dict() for t in tasks]
+    return jsonify(tasks)
+
+
 @app.route('/')
 def tasks_list():
+    fmt = request.args.get('format')
     tasks = Task.query.all()
+    if fmt == 'json':
+        return render_tasks_json(tasks)
     return render_template('list.html', tasks=tasks)
 
 

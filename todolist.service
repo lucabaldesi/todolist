@@ -1,0 +1,13 @@
+[Unit]
+Description=Todolist service
+After=network-online.target
+ 
+[Service]
+Type=simple
+ 
+ExecStart=/root/todolist.py
+ 
+Restart=on-failure
+ 
+[Install]
+WantedBy=multi-user.target

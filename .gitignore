@@ -1,0 +1,5 @@
+# default DB
+todolist.db
+
+# generated objects
+*.pyc

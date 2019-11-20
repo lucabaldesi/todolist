@@ -1,0 +1,21 @@
+<table>
+{% for task in tasks %}
+    <tr>
+		<td>
+        {% if task.done %} <strike> {% endif %}{{ task.content }} {% if task.done %} </strike>{% endif %}
+		</td>
+		<td>
+        <a href="/done/{{ task.id }}">Done</a>
+		</td>
+		<td>
+        <a href="/delete/{{ task.id }}">Delete</a>
+		</td>
+    </tr>
+{% endfor %}
+</table>
+
+
+<form action="/task" method="post">
+    <p><input type="text" name="content"></p>
+    <input type="submit" value="Add task">
+</form>

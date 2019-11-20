@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>ToDo Kanban!</title>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<script src="kanban.js"></script> 
+<link rel="stylesheet" href="kanban.css">
+
+</head>
+<body>
+	<div id=main-container class=container-fluid>
+		<div class="page-header text-center">
+			<h1>ToDo Kanban</h1>
+		</div>
+
+		<div id="creation_form" class="row center-block">
+			<div class="col-md-6 col-md-offset-3">
+				<form class="form-horizontal center-block" action="#" onsubmit="create_task()">
+					<div class="form-group center-block">
+						<label class="control-label col-md-2" for="content">Task:</label>
+						<div class="col-md-8">
+							<input type="text" autocomplete="off" class="form-control" id="content" placeholder="">
+						</div>
+						<div class="col-md-2">
+							<button type="submit" class="btn btn-info">Create task</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div id="status_bar" class="row center-block">
+			<div id="status" class="text-center alert alert-success col-md-6 col-md-offset-3">
+				<span id='state_label'></span>
+			</div>
+		</div>
+		<div id="board tasks" class="row center-block">
+			<div id="board" class="col-md-6 col-md-offset-3">
+				<div class="col-md-4">
+					<div class="row">
+						<label class="label label-danger">ToDo</label>
+					</div>
+					<ul class="list-group mylist" id='todolist' ondrop="drop(event)" ondragover="allowDrop(event)">
+					</ul>
+				</div>
+				<div class="col-md-4">
+					<div class="row">
+						<label class="label label-warning">Done</label>
+					</div>
+					<ul class="list-group mylist" id='donelist' ondrop="drop(event)" ondragover="allowDrop(event)">
+					</ul>
+				</div>
+				<div class="col-md-4">
+					<div class="row">
+						<label class="label label-success">Delete</label>
+					</div>
+					<div style='font-style:82px;'>
+						<hr/>
+						<p style='font-size:150px;' class='text-center'>
+							<span id='trash' class="glyphicon glyphicon-trash" ondrop="drop(event)" ondragover="allowDrop(event)">
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

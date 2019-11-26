@@ -4,6 +4,7 @@ from flask import Flask, request
 from flask import render_template
 from flask import redirect
 from flask import jsonify
+from flask import abort
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -16,10 +17,12 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text)
     done = db.Column(db.Boolean, default=False)
+    chocolate = db.Column(db.Integer, default=0)
 
     def __init__(self, content):
         self.content = content
         self.done = False
+        self.chocolate = 0
 
     def __repr__(self):
         return '<Content {0}>'.format(self.content)
@@ -30,7 +33,8 @@ class Task(db.Model):
     def dict(self):
         return {'id': self.id,
                 'content': self.content,
-                'done': self.done}
+                'done': self.done,
+                'chocolate': self.chocolate}
 
 
 db.create_all()
@@ -99,6 +103,25 @@ def resolve_task(task_id):
 @app.route('/kanban')
 def kanban():
     return redirect('/static/kanban.html')
+
+
+@app.route('/tasks/<int:task_id>', methods=['UPDATE'])
+def manage_task(task_id):
+    task = Task.query.get(task_id)
+
+    if not task:
+        return abort(404)
+
+    chocolate = request.form.get('chocolate')
+    if chocolate:
+        task.chocolate = chocolate
+
+    db.session.commit()
+
+    fmt = request.args.get('format')
+    if fmt == 'json':
+        return jsonify(task.dict()), 200
+    return redirect('/')
 
 
 if __name__ == '__main__':

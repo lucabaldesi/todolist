@@ -31,9 +31,12 @@ function allowDrop(ev) {
 }
 
 function drag(ev) {
-	id = ev.target.id;
-	if (id === undefined)
-		id = ev.target.parentElement.id;
+	target = ev.target
+	id = target.id;
+	while (id === undefined || ! id.startsWith('task')) {
+		target = target.parentElement;
+		id = target.id;
+	}
 	ev.dataTransfer.setData("text", id);
 }
 
@@ -82,6 +85,39 @@ function create_task() {
 	}
 }
 
+function task_choc_menu(task_id, chocolate) {
+	var choc = document.createElement("SELECT");
+	choc.style = "float: right";
+	choc.className="choc-select";
+	choc.onchange = function () {
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				state = 'OK'
+				set_state("Data synchronized");
+				fetch_tasks();
+			}
+		};
+		params = 'chocolate=' + encodeURIComponent(choc.value);
+		xhttp.open("UPDATE", "/tasks/" +
+		           encodeURIComponent(task_id) +
+		           "?format=json", true);
+		xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+		xhttp.send(params);
+		state = 'DOING'
+		set_state("Changing chocolate amount");
+	};
+
+	for (var i=0; i<10; i++) {
+		var opt = document.createElement("OPTION");
+		opt.textContent = i;
+		choc.appendChild(opt);
+	}
+	choc.value = chocolate;
+
+	return choc
+}
+
 function update_tasks(tasks) {
 	var todo = document.getElementById("todolist");
 	var done = document.getElementById("donelist");
@@ -92,14 +128,22 @@ function update_tasks(tasks) {
 		done.removeChild(done.firstChild);
 	}
 
+	tasks.sort(function (a, b) {return b.chocolate - a.chocolate});
 	for (i in tasks) {
 		var node = document.createElement("LI");
 		node.id = 'task'+tasks[i].id;
 		node.tid = tasks[i].id;
 		node.done = tasks[i].done;
-		node.className="list-group-item text-center allselect";
-		var textnode = document.createTextNode(tasks[i].content);
+		node.className="row center-block list-group-item text-center allselect";
+
+		var textnode = document.createElement("SPAN");
+		textnode.textContent = tasks[i].content;
+		textnode.className="col-md-11";
+		textnode.draggagle=true;
+		textnode.ondragstart=drag;
 		node.appendChild(textnode);
+		node.appendChild(task_choc_menu(node.tid, tasks[i].chocolate));
+
 		if (tasks[i].done)
 			done.appendChild(node);
 		else

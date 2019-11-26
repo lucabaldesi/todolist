@@ -24,3 +24,13 @@
 	border-width: 1px;
 	background-color:#E6E6FA
 }
+
+.choc-select {
+	-webkit-appearance: none;
+	min-width: 15px;
+	text-align: center;
+	text-align-last: center;
+	background-color: #5e2711;
+	color: white;
+	font-weight: bold;
+}

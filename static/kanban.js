@@ -134,15 +134,25 @@ function update_tasks(tasks) {
 		node.id = 'task'+tasks[i].id;
 		node.tid = tasks[i].id;
 		node.done = tasks[i].done;
-		node.className="row center-block list-group-item text-center allselect";
+		node.className="row center-block list-group-item text-center autoselect";
+
+		var handle = document.createElement("A");
+		handle.className="glyphicon glyphicon-menu-hamburger col-md-1 noselect";
+		handle.draggagle=true;
+		handle.style="float: left;";
+		handle.ondragstart=drag;
+		node.appendChild(handle);
 
 		var textnode = document.createElement("SPAN");
 		textnode.textContent = tasks[i].content;
-		textnode.className="col-md-11";
+		textnode.className="col-md-9 allselect";
 		textnode.draggagle=true;
 		textnode.ondragstart=drag;
+		textnode.style="word-wrap: break-word;";
 		node.appendChild(textnode);
-		node.appendChild(task_choc_menu(node.tid, tasks[i].chocolate));
+
+		var menu = task_choc_menu(node.tid, tasks[i].chocolate);
+		node.appendChild(menu)
 
 		if (tasks[i].done)
 			done.appendChild(node);

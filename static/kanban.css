@@ -18,6 +18,16 @@
                                   supported by Chrome, Opera and Firefox */
 }
 
+.autoselect {
+  -webkit-touch-callout: auto; /* iOS Safari */
+    -webkit-user-select: auto; /* Safari */
+     -khtml-user-select: auto; /* Konqueror HTML */
+       -moz-user-select: auto; /* Old versions of Firefox */
+        -ms-user-select: auto; /* Internet Explorer/Edge */
+            user-select: auto; /* Non-prefixed version, currently
+                                  supported by Chrome, Opera and Firefox */
+}
+
 .mylist {
 	min-height: 300px;
 	border-style: solid;

@@ -18,11 +18,13 @@ class Task(db.Model):
     content = db.Column(db.Text)
     done = db.Column(db.Boolean, default=False)
     chocolate = db.Column(db.Integer, default=0)
+    board = db.Column(db.Text, default='default')
 
     def __init__(self, content):
         self.content = content
         self.done = False
         self.chocolate = 0
+        self.board = 'default'
 
     def __repr__(self):
         return '<Content {0}>'.format(self.content)
@@ -34,7 +36,8 @@ class Task(db.Model):
         return {'id': self.id,
                 'content': self.content,
                 'done': self.done,
-                'chocolate': self.chocolate}
+                'chocolate': self.chocolate,
+                'board': self.board}
 
 
 db.create_all()
@@ -67,8 +70,12 @@ def add_task():
     content = request.form['content']
     if not content:
         return 'Error'
+    board = request.form['board']
+    if not board:
+        board = 'default'
 
     task = Task(content)
+    task.board = board
     db.session.add(task)
     db.session.commit()
     return redirect('/')
@@ -126,4 +133,3 @@ def manage_task(task_id):
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
-

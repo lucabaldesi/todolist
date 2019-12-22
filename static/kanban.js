@@ -1,4 +1,5 @@
 var state = 'OK';
+var board = 'default';
 
 function set_state(stat) {
 	var bar = document.getElementById('status');
@@ -80,6 +81,7 @@ function create_task() {
 	cont = document.getElementById('content');
 	if (cont.value != undefined) {
 		params = 'content=' + encodeURIComponent(cont.value);
+		params += '&board=' + encodeURIComponent(board);
 		xhttp.send(params);
 		content.value='';
 	}
@@ -121,47 +123,64 @@ function task_choc_menu(task_id, chocolate) {
 function update_tasks(tasks) {
 	var todo = document.getElementById("todolist");
 	var done = document.getElementById("donelist");
+	var board_component = document.getElementById("board_select");
+	var boards = new Set();
 	while (todo.firstChild) {
 		todo.removeChild(todo.firstChild);
 	}
 	while (done.firstChild) {
 		done.removeChild(done.firstChild);
 	}
+	while (board_component.firstChild) {
+		board_component.removeChild(board_component.firstChild);
+	}
 
 	tasks.sort(function (a, b) {return b.chocolate - a.chocolate});
 	for (i in tasks) {
-		var node = document.createElement("LI");
-		node.id = 'task'+tasks[i].id;
-		node.tid = tasks[i].id;
-		node.done = tasks[i].done;
-		node.className="row center-block list-group-item text-center autoselect";
+		boards.add(tasks[i].board);
+		if (tasks[i].board == board || board == "__All__") {
+			var node = document.createElement("LI");
+			node.id = 'task'+tasks[i].id;
+			node.tid = tasks[i].id;
+			node.done = tasks[i].done;
+			node.board = tasks[i].board;
+			node.className="row center-block list-group-item text-center autoselect";
 
-		var handle = document.createElement("A");
-		handle.className="glyphicon glyphicon-menu-hamburger col-md-1 noselect";
-		handle.draggagle=true;
-		handle.style="float: left;";
-		handle.ondragstart=drag;
-		node.appendChild(handle);
+			var handle = document.createElement("A");
+			handle.className="glyphicon glyphicon-menu-hamburger col-md-1 noselect";
+			handle.draggagle=true;
+			handle.style="float: left;";
+			handle.ondragstart=drag;
+			node.appendChild(handle);
 
-		var textnode = document.createElement("SPAN");
-		textnode.textContent = tasks[i].content;
-		textnode.className="col-md-9 allselect";
-		textnode.draggagle=true;
-		textnode.ondragstart=drag;
-		textnode.style="word-wrap: break-word;";
-		node.appendChild(textnode);
+			var textnode = document.createElement("SPAN");
+			textnode.textContent = tasks[i].content;
+			textnode.className="col-md-9 allselect";
+			textnode.draggagle=true;
+			textnode.ondragstart=drag;
+			textnode.style="word-wrap: break-word;";
+			node.appendChild(textnode);
 
-		var menu = task_choc_menu(node.tid, tasks[i].chocolate);
-		node.appendChild(menu)
+			var menu = task_choc_menu(node.tid, tasks[i].chocolate);
+			node.appendChild(menu)
 
-		if (tasks[i].done)
-			done.appendChild(node);
-		else
-			todo.appendChild(node);
+			if (tasks[i].done)
+				done.appendChild(node);
+			else
+				todo.appendChild(node);
 
-		node.draggagle=true;
-		node.ondragstart=drag;
+			node.draggagle=true;
+			node.ondragstart=drag;
+		}
 	}
+	boards.add(board);
+	boards.add("__All__");
+	for (let b of boards) {
+		var opt = document.createElement("OPTION");
+		opt.textContent = b;
+		board_component.appendChild(opt);
+	}
+	board_component.value = board;
 }
 
 function fetch_tasks() {
@@ -181,3 +200,18 @@ function fetch_tasks() {
 document.addEventListener('DOMContentLoaded', function(event) {
 	fetch_tasks();
 })
+
+function set_board() {
+	_board = document.getElementById('board_name').value;
+	if (_board === undefined || _board == "")
+		board = "default";
+	else
+		board = _board;
+	fetch_tasks();
+}
+
+function select_board() {
+	_board = document.getElementById('board_select').value;
+	board = _board;
+	fetch_tasks();
+}

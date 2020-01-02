@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from sys import argv
 
 from flask import Flask, request
 from flask import render_template
@@ -6,11 +7,26 @@ from flask import redirect
 from flask import jsonify
 from flask import abort
 from flask_sqlalchemy import SQLAlchemy
+from flask_httpauth import HTTPBasicAuth
+
+auth = HTTPBasicAuth()
+password = None
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todolist.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
+
+
+@auth.verify_password
+def verify_password(uname, pword):
+    if password:
+        if password == pword:
+            return True
+        else:
+            return False
+    else:
+        return True
 
 
 class Task(db.Model):
@@ -49,6 +65,7 @@ def render_tasks_json(tasks):
 
 
 @app.route('/')
+@auth.login_required
 def tasks_list():
     fmt = request.args.get('format')
     tasks = Task.query.all()
@@ -58,6 +75,7 @@ def tasks_list():
 
 
 @app.route('/list')
+@auth.login_required
 def task_list_txt():
     rv = "# TODO\n"
     for task in Task.query.all():
@@ -66,6 +84,7 @@ def task_list_txt():
 
 
 @app.route('/task', methods=['POST'])
+@auth.login_required
 def add_task():
     content = request.form['content']
     if not content:
@@ -82,6 +101,7 @@ def add_task():
 
 
 @app.route('/delete/<int:task_id>')
+@auth.login_required
 def delete_task(task_id):
     task = Task.query.get(task_id)
     if not task:
@@ -93,6 +113,7 @@ def delete_task(task_id):
 
 
 @app.route('/done/<int:task_id>')
+@auth.login_required
 def resolve_task(task_id):
     task = Task.query.get(task_id)
 
@@ -108,11 +129,13 @@ def resolve_task(task_id):
 
 
 @app.route('/kanban')
+@auth.login_required
 def kanban():
     return redirect('/static/kanban.html')
 
 
 @app.route('/tasks/<int:task_id>', methods=['UPDATE'])
+@auth.login_required
 def manage_task(task_id):
     task = Task.query.get(task_id)
 
@@ -132,4 +155,6 @@ def manage_task(task_id):
 
 
 if __name__ == '__main__':
+    if len(argv) > 1:
+        password = argv[1]
     app.run(host='0.0.0.0')

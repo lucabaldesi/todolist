@@ -154,7 +154,9 @@ function update_tasks(tasks) {
 			node.appendChild(handle);
 
 			var textnode = document.createElement("SPAN");
-			textnode.textContent = tasks[i].content;
+			textnode.textContent = "[" + tasks[i].id + "] " + tasks[i].content;
+			textnode.setAttribute("data-toggle", "tooltip");
+			textnode.title = tasks[i].board;
 			textnode.className="col-md-9 allselect";
 			textnode.draggagle=true;
 			textnode.ondragstart=drag;

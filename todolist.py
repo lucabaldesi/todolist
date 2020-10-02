@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 from sys import argv
 
 from flask import Flask, request
@@ -157,4 +158,22 @@ def manage_task(task_id):
 if __name__ == '__main__':
     if len(argv) > 1:
         password = argv[1]
-    app.run(host='0.0.0.0')
+    ssl_cert = "fullchain.pem"
+    ssl_key = "privkey.pem"
+
+    if os.path.isfile(ssl_cert) and os.path.isfile(ssl_key):
+        from cheroot.wsgi import Server as WSGIServer
+        from cheroot.wsgi import PathInfoDispatcher as WSGIPathInfoDispatcher
+        from cheroot.ssl.builtin import BuiltinSSLAdapter
+
+        my_app = WSGIPathInfoDispatcher({'/': app})
+        server = WSGIServer(('0.0.0.0', 5000), my_app)
+
+        server.ssl_adapter =  BuiltinSSLAdapter(ssl_cert, ssl_key, None)
+
+        try:
+           server.start()
+        except KeyboardInterrupt:
+           server.stop()
+    else:
+        app.run(host='0.0.0.0')

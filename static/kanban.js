@@ -1,5 +1,11 @@
 var state = 'OK';
-var board = 'default';
+var args = {};
+window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+    args[key] = value;
+});
+
+board = (args['board'] ? args['board'] : "default");
+
 
 function set_state(stat) {
 	var bar = document.getElementById('status');

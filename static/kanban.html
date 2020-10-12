@@ -22,7 +22,7 @@
 		<div id="board_form" class="row center-block">
 			<div class="col-md-6 col-md-offset-3">
 				<select class="col-md-2" id="board_select" onchange="select_board()"></select>
-				<form class="form-horizontal center-block" action="#" onsubmit="set_board()">
+				<form class="form-horizontal center-block" action="#" onsubmit="return set_board();">
 					<div class="form-group center-block">
 						<label class="control-label col-md-2" for="content">Board name:</label>
 						<div class="col-md-5">
@@ -38,7 +38,7 @@
 		<hr>
 		<div id="creation_form" class="row center-block">
 			<div class="col-md-6 col-md-offset-3">
-				<form class="form-horizontal center-block" action="#" onsubmit="create_task()">
+				<form class="form-horizontal center-block" action="#" onsubmit="return create_task();">
 					<div class="form-group center-block">
 						<label class="control-label col-md-2" for="content">Task:</label>
 						<div class="col-md-8">

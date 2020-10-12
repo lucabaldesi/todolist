@@ -85,6 +85,7 @@ function create_task() {
 		xhttp.send(params);
 		content.value='';
 	}
+	return false;
 }
 
 function task_choc_menu(task_id, chocolate) {
@@ -210,6 +211,7 @@ function set_board() {
 	else
 		board = _board;
 	fetch_tasks();
+	return false;
 }
 
 function select_board() {
